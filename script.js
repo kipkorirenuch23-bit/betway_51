@@ -7,15 +7,20 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("JavaScript loaded successfully");
 
     if (!form || !status || !button) {
-        console.error("Required HTML element not found.");
+        console.error("Required HTML elements not found.");
+
+        if (status) {
+            status.textContent = "Form connection error.";
+        }
+
         return;
     }
 
     status.textContent = "JavaScript is running!";
 
-    // Diagnostic: test whether the button receives clicks
+    // Confirm button clicks
     button.addEventListener("click", function () {
-        alert("SEND BUTTON CLICKED!");
+        console.log("Send button clicked");
     });
 
     // Handle form submission
@@ -25,8 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("Form submission detected!");
 
-        status.textContent = "Button detected! Sending...";
-
         const name = document.getElementById("name").value.trim();
         const message = document.getElementById("message").value.trim();
 
@@ -34,6 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
             status.textContent = "Please complete all fields.";
             return;
         }
+
+        status.textContent = "Button detected! Sending...";
 
         button.disabled = true;
 
@@ -53,18 +58,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await response.json();
 
             if (!response.ok) {
-                throw new Error(result.error || "Message failed.");
+                throw new Error(
+                    result.error || "Message failed."
+                );
             }
 
             status.textContent = "Message sent successfully!";
+
             form.reset();
 
         } catch (error) {
 
             console.error("Sending error:", error);
 
-            status.textContent =
-                "Could not send message. Please try again.";
+            status.textContent = "Error: " + error.message;
 
         } finally {
 
