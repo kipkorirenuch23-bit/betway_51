@@ -2,26 +2,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.getElementById("contactForm");
     const status = document.getElementById("status");
+    const button = document.getElementById("sendBtn");
 
     console.log("JavaScript loaded successfully");
 
-    if (!form || !status) {
-        console.error("Form or status element not found.");
+    if (!form || !status || !button) {
+        console.error("Required HTML element not found.");
         return;
     }
 
-    // Confirm that JavaScript has loaded
     status.textContent = "JavaScript is running!";
 
+    // Diagnostic: test whether the button receives clicks
+    button.addEventListener("click", function () {
+        alert("SEND BUTTON CLICKED!");
+    });
+
+    // Handle form submission
     form.addEventListener("submit", async function (event) {
 
         event.preventDefault();
 
-        console.log("Send button clicked");
+        console.log("Form submission detected!");
 
-        // Confirm that the button is working
         status.textContent = "Button detected! Sending...";
-        alert("BUTTON IS WORKING!");
 
         const name = document.getElementById("name").value.trim();
         const message = document.getElementById("message").value.trim();
@@ -31,7 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        button.disabled = true;
+
         try {
+
             const response = await fetch("/api/notify", {
                 method: "POST",
                 headers: {
@@ -53,9 +60,18 @@ document.addEventListener("DOMContentLoaded", function () {
             form.reset();
 
         } catch (error) {
+
             console.error("Sending error:", error);
+
             status.textContent =
                 "Could not send message. Please try again.";
+
+        } finally {
+
+            button.disabled = false;
+
         }
+
     });
+
 });
