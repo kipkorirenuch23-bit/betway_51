@@ -10,11 +10,17 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    // Confirm that JavaScript has loaded
+    status.textContent = "JavaScript is running!";
+
     form.addEventListener("submit", async function (event) {
 
         event.preventDefault();
 
         console.log("Send button clicked");
+
+        // Confirm that the button is working
+        status.textContent = "Button detected! Sending...";
 
         const name = document.getElementById("name").value.trim();
         const message = document.getElementById("message").value.trim();
@@ -24,15 +30,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        status.textContent = "Sending...";
-
         try {
             const response = await fetch("/api/notify", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ name, message })
+                body: JSON.stringify({
+                    name: name,
+                    message: message
+                })
             });
 
             const result = await response.json();
@@ -46,7 +53,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
             console.error("Sending error:", error);
-            status.textContent = "Could not send message. Please try again.";
+            status.textContent =
+                "Could not send message. Please try again.";
         }
     });
 });
