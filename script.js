@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Confirm that the button is working
         status.textContent = "Button detected! Sending...";
+        alert("BUTTON IS WORKING!");
 
         const name = document.getElementById("name").value.trim();
         const message = document.getElementById("message").value.trim();
