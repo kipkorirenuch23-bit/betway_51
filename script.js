@@ -18,17 +18,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     status.textContent = "JavaScript is running!";
 
-    // Confirm button clicks
     button.addEventListener("click", function () {
         console.log("Send button clicked");
     });
 
-    // Handle form submission
     form.addEventListener("submit", async function (event) {
 
         event.preventDefault();
-
-        console.log("Form submission detected!");
 
         const name = document.getElementById("name").value.trim();
         const message = document.getElementById("message").value.trim();
@@ -38,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        status.textContent = "Button detected! Sending...";
+        status.textContent = "Sending message...";
 
         button.disabled = true;
 
@@ -57,10 +53,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const result = await response.json();
 
+            console.log("Server response:", result);
+
             if (!response.ok) {
-                throw new Error(
-                    result.error || "Message failed."
-                );
+
+                let errorMessage = result.error || "Message failed.";
+
+                if (result.missing) {
+                    errorMessage +=
+                        " | BOT_TOKEN missing: " +
+                        result.missing.BOT_TOKEN +
+                        " | CHAT_ID missing: " +
+                        result.missing.CHAT_ID;
+                }
+
+                throw new Error(errorMessage);
             }
 
             status.textContent = "Message sent successfully!";
