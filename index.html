@@ -1,22 +1,37 @@
-<form id="contactForm">
-    <input
-        type="text"
-        id="name"
-        placeholder="Enter your name"
-        required
-    >
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <textarea
-        id="message"
-        placeholder="Type your message"
-        required
-    ></textarea>
+    <form id="contactForm">
 
-    <button type="submit">Send Message</button>
+        <input
+            type="text"
+            id="name"
+            placeholder="Enter your name"
+            required
+        >
 
-    <p id="status">Ready to send.</p>
-</form>
+        <textarea
+            id="message"
+            placeholder="Type your message"
+            required
+        ></textarea>
 
-<script src="/script.js"></script>
+        <button type="submit" id="sendBtn">
+            Send Message
+        </button>
+
+        <p id="status">JavaScript is loading...</p>
+
+    </form>
+
+    <script src="/script.js"></script>
+
 </body>
 </html>
