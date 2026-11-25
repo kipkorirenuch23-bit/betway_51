@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+    // Allow POST requests only
     if (req.method !== "POST") {
         return res.status(405).json({
             error: "Method not allowed"
@@ -6,8 +7,10 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Get form data
         const { name, message } = req.body || {};
 
+        // Validate form fields
         if (
             typeof name !== "string" ||
             typeof message !== "string" ||
@@ -19,15 +22,22 @@ export default async function handler(req, res) {
             });
         }
 
+        // Read Telegram environment variables
         const BOT_TOKEN = process.env.BOT_TOKEN;
         const CHAT_ID = process.env.CHAT_ID;
 
+        // Diagnostic: identify which variable is missing
         if (!BOT_TOKEN || !CHAT_ID) {
             return res.status(500).json({
-                error: "Telegram configuration is missing."
+                error: "Telegram configuration is missing.",
+                missing: {
+                    BOT_TOKEN: !BOT_TOKEN,
+                    CHAT_ID: !CHAT_ID
+                }
             });
         }
 
+        // Send message to Telegram
         const telegramResponse = await fetch(
             `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
             {
@@ -37,13 +47,17 @@ export default async function handler(req, res) {
                 },
                 body: JSON.stringify({
                     chat_id: CHAT_ID,
-                    text: `New website message\n\nName: ${name.trim()}\nMessage: ${message.trim()}`
+                    text:
+                        `New website message\n\n` +
+                        `Name: ${name.trim()}\n` +
+                        `Message: ${message.trim()}`
                 })
             }
         );
 
         const telegramResult = await telegramResponse.json();
 
+        // Check Telegram response
         if (!telegramResponse.ok || !telegramResult.ok) {
             console.error("Telegram error:", telegramResult);
 
@@ -52,6 +66,7 @@ export default async function handler(req, res) {
             });
         }
 
+        // Success
         return res.status(200).json({
             success: true,
             message: "Message sent successfully."
