@@ -1,72 +1,52 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const forms = document.querySelectorAll("form[data-telegram]");
+document.addEventListener("DOMContentLoaded", function () {
 
-  forms.forEach((form) => {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    const form = document.getElementById("contactForm");
+    const status = document.getElementById("status");
 
-      const status = document.getElementById("message");
-      const submitButton = form.querySelector('[type="submit"]');
+    console.log("JavaScript loaded successfully");
 
-      const fields = Array.from(form.querySelectorAll(
-        'input:not([type="password"]):not([type="hidden"]), textarea'
-      ));
-
-      const submittedText = fields
-        .map(field => {
-          const value = field.value.trim();
-
-          if (!value) return null;
-
-          return `${field.name || field.id || "Message"}: ${value}`;
-        })
-        .filter(Boolean)
-        .join("\n");
-
-      if (!submittedText) {
-        if (status) status.textContent = "Please enter a message.";
+    if (!form || !status) {
+        console.error("Form or status element not found.");
         return;
-      }
+    }
 
-      if (submitButton) submitButton.disabled = true;
-      if (status) status.textContent = "Sending...";
+    form.addEventListener("submit", async function (event) {
 
-      try {
-        const response = await fetch("/api/notify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            text: submittedText,
-            form: form.id || "Website form"
-          })
-        });
+        event.preventDefault();
 
-        const result = await response.json();
+        console.log("Send button clicked");
 
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || "Submission failed");
+        const name = document.getElementById("name").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!name || !message) {
+            status.textContent = "Please complete all fields.";
+            return;
         }
 
-        if (status) {
-          status.textContent = "Submitted successfully!";
-          status.style.color = "#22c55e";
+        status.textContent = "Sending...";
+
+        try {
+            const response = await fetch("/api/notify", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name, message })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Message failed.");
+            }
+
+            status.textContent = "Message sent successfully!";
+            form.reset();
+
+        } catch (error) {
+            console.error("Sending error:", error);
+            status.textContent = "Could not send message. Please try again.";
         }
-
-        form.reset();
-
-      } catch (error) {
-        console.error(error);
-
-        if (status) {
-          status.textContent = "Unable to send. Please try again.";
-          status.style.color = "#ef4444";
-        }
-
-      } finally {
-        if (submitButton) submitButton.disabled = false;
-      }
     });
-  });
 });
