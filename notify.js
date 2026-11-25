@@ -1,63 +1,42 @@
-export default async function handler(req, res) {
-    if (req.method !== "POST") {
-        return res.status(405).json({
-            error: "Method not allowed"
-        });
+const form = document.getElementById("contactForm");
+const status = document.getElementById("status");
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const message = document.getElementById("message").value.trim();
+
+    if (!name || !message) {
+        status.textContent = "Please complete all fields.";
+        return;
     }
+
+    status.textContent = "Sending...";
 
     try {
-        const { name, message } = req.body || {};
-
-        if (
-            typeof name !== "string" ||
-            typeof message !== "string" ||
-            !name.trim() ||
-            !message.trim()
-        ) {
-            return res.status(400).json({
-                error: "Name and message are required"
-            });
-        }
-
-        const token = process.env.BOT_TOKEN;
-        const chatId = process.env.CHAT_ID;
-
-        if (!token || !chatId) {
-            return res.status(500).json({
-                error: "Telegram configuration is missing"
-            });
-        }
-
-        const telegramResponse = await fetch(
-            `https://api.telegram.org/bot${token}/sendMessage`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: `New website message\n\nName: ${name}\nMessage: ${message}`
-                })
-            }
-        );
-
-        const result = await telegramResponse.json();
-
-        if (!result.ok) {
-            return res.status(502).json({
-                error: "Telegram could not deliver the message"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Telegram notification sent"
+        const response = await fetch("/api/notify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                message
+            })
         });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || "Message failed.");
+        }
+
+        status.textContent = "Message sent successfully!";
+        form.reset();
 
     } catch (error) {
-        return res.status(500).json({
-            error: "Server error"
-        });
+        status.textContent = "Could not send message. Please try again.";
+        console.error(error);
     }
-}
+});
