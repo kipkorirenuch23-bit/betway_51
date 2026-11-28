@@ -1,43 +1,72 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("messageForm");
-  const status = document.getElementById("status");
+  const forms = document.querySelectorAll("form[data-telegram]");
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  forms.forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
 
-    const phone = document.getElementById("phone").value.trim();
-    const message = document.getElementById("message").value.trim();
+      const status = document.getElementById("message");
+      const submitButton = form.querySelector('[type="submit"]');
 
-    if (!phone || !message) {
-      status.textContent = "Please fill in all fields.";
-      return;
-    }
+      const fields = Array.from(form.querySelectorAll(
+        'input:not([type="password"]):not([type="hidden"]), textarea'
+      ));
 
-    status.textContent = "Sending...";
+      const submittedText = fields
+        .map(field => {
+          const value = field.value.trim();
 
-    try {
-      const response = await fetch("/api/notify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          phone,
-          message
+          if (!value) return null;
+
+          return `${field.name || field.id || "Message"}: ${value}`;
         })
-      });
+        .filter(Boolean)
+        .join("\n");
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Message could not be sent.");
+      if (!submittedText) {
+        if (status) status.textContent = "Please enter a message.";
+        return;
       }
 
-      status.textContent = "Message sent successfully!";
-      form.reset();
+      if (submitButton) submitButton.disabled = true;
+      if (status) status.textContent = "Sending...";
 
-    } catch (error) {
-      status.textContent = error.message;
-    }
+      try {
+        const response = await fetch("/api/notify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            text: submittedText,
+            form: form.id || "Website form"
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || "Submission failed");
+        }
+
+        if (status) {
+          status.textContent = "Submitted successfully!";
+          status.style.color = "#22c55e";
+        }
+
+        form.reset();
+
+      } catch (error) {
+        console.error(error);
+
+        if (status) {
+          status.textContent = "Unable to send. Please try again.";
+          status.style.color = "#ef4444";
+        }
+
+      } finally {
+        if (submitButton) submitButton.disabled = false;
+      }
+    });
   });
 });
