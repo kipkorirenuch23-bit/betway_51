@@ -23,8 +23,8 @@ export default async function handler(req, res) {
         }
 
         // Read Telegram environment variables
-        const BOT_TOKEN = process.env.BOT_TOKEN;
-        const CHAT_ID = process.env.CHAT_ID;
+        const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+        const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
         // Diagnostic: identify which variable is missing
         if (!BOT_TOKEN || !CHAT_ID) {
