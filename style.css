@@ -59,7 +59,7 @@ body {
   transform: translateY(-80px);
   background: white;
   color: #222;
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 5px 25px rgba(0, 0, 0, .45);
 }
