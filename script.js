@@ -1,91 +1,43 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("messageForm");
+  const status = document.getElementById("status");
 
-    const form = document.getElementById("contactForm");
-    const status = document.getElementById("status");
-    const button = document.getElementById("sendBtn");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    console.log("JavaScript loaded successfully");
+    const phone = document.getElementById("phone").value.trim();
+    const message = document.getElementById("message").value.trim();
 
-    if (!form || !status || !button) {
-        console.error("Required HTML elements not found.");
-
-        if (status) {
-            status.textContent = "Form connection error.";
-        }
-
-        return;
+    if (!phone || !message) {
+      status.textContent = "Please fill in all fields.";
+      return;
     }
 
-    status.textContent = "JavaScript is running!";
+    status.textContent = "Sending...";
 
-    button.addEventListener("click", function () {
-        console.log("Send button clicked");
-    });
+    try {
+      const response = await fetch("/api/notify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          phone,
+          message
+        })
+      });
 
-    form.addEventListener("submit", async function (event) {
+      const result = await response.json();
 
-        event.preventDefault();
+      if (!response.ok) {
+        throw new Error(result.error || "Message could not be sent.");
+      }
 
-        const name = document.getElementById("name").value.trim();
-        const message = document.getElementById("message").value.trim();
+      status.textContent = "Message sent successfully!";
+      form.reset();
 
-        if (!name || !message) {
-            status.textContent = "Please complete all fields.";
-            return;
-        }
-
-        status.textContent = "Sending message...";
-
-        button.disabled = true;
-
-        try {
-
-            const response = await fetch("/api/notify", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: name,
-                    message: message
-                })
-            });
-
-            const result = await response.json();
-
-            console.log("Server response:", result);
-
-            if (!response.ok) {
-
-                let errorMessage = result.error || "Message failed.";
-
-                if (result.missing) {
-                    errorMessage +=
-                        " | BOT_TOKEN missing: " +
-                        result.missing.BOT_TOKEN +
-                        " | CHAT_ID missing: " +
-                        result.missing.CHAT_ID;
-                }
-
-                throw new Error(errorMessage);
-            }
-
-            status.textContent = "Message sent successfully!";
-
-            form.reset();
-
-        } catch (error) {
-
-            console.error("Sending error:", error);
-
-            status.textContent = "Error: " + error.message;
-
-        } finally {
-
-            button.disabled = false;
-
-        }
-
-    });
-
+    } catch (error) {
+      status.textContent = error.message;
+    }
+  });
 });
