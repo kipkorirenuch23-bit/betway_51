@@ -3,69 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
-  <link rel="stylesheet" href="/style.css">
+  <title>Betway Three</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div class="page">
+  <main class="container">
+    <h1>Betway Three</h1>
+    <p>Phone Number & Message Notification</p>
 
-  <!-- Navigation -->
-  <div class="top-buttons">
-    <button type="button" class="nav-btn active">Login</button>
-    <button type="button" class="nav-btn">Sign Up</button>
-  </div>
+    <form id="messageForm">
+      <label for="phone">Phone Number</label>
+      <input
+        type="tel"
+        id="phone"
+        placeholder="Enter phone number"
+        required
+      >
 
-  <!-- Login panel -->
-  <div class="login-modal">
+      <label for="message">Your Message</label>
+      <textarea
+        id="message"
+        placeholder="Type your message"
+        required
+      ></textarea>
 
-    <div class="modal-header">
-      <h2>betway</h2>
-      <button type="button" class="close-btn">×</button>
-    </div>
+      <p class="notice">
+        Your phone number and message will be sent to our Telegram notification bot.
+      </p>
 
-    <form id="accessForm" data-telegram>
-
-      <div class="phone-field">
-        <span>+27</span>
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Mobile Number"
-          autocomplete="tel"
-        >
-      </div>
-
-      <div class="password-field">
-        <input
-          type="text"
-          id="userPassword"
-          placeholder="Enter password"
-          autocomplete="off"
-       >
-      </div>
-
-      <div class="forgot-links">
-        <a href="#">Forgot Username</a>
-        <a href="#">Forgot Password?</a>
-      </div>
-
-      <div class="signup-strip">
-        <span>Don't have an account yet?</span>
-        <a href="#">Sign Up ›</a>
-      </div>
-
-      <button type="submit" class="login-btn">Login</button>
-
+      <button type="submit">Submit</button>
     </form>
 
-    <p id="statusMessage"></p>
+    <p id="status"></p>
+  </main>
 
-  </div>
-</div>
-
-<script src="/script.js" defer></script>
-
+  <script src="script.js"></script>
 </body>
 </html>
